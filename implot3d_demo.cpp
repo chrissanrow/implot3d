@@ -669,6 +669,29 @@ void DemoBoxScale() {
     }
 }
 
+void DemoAutoBoxScale() {
+    static ImPlot3DFlags flags = ImPlot3DFlags_None;
+    CHECKBOX_FLAG(flags, ImPlot3DFlags_AutoBoxScale);
+
+    // Dynamic plot data to make auto-box scaling apparent
+    static double t = 0.0;
+    t += ImGui::GetIO().DeltaTime;
+    constexpr int N = 100;
+    static double xs[N], ys[N], zs[N];
+    for (int i = 0; i < N; ++i) {
+        double u = i / (double)(N - 1);
+        xs[i] = sin(u * 2.0 * IM_PI + t);
+        ys[i] = cos(u * 4.0 * IM_PI + t * 0.5);
+        zs[i] = u * 2.0 - 1.0 + sin(t) * 0.5;
+    }
+
+    if (ImPlot3D::BeginPlot("Auto Box Scale Demo", ImVec2(-1, 0), flags)) {
+        ImPlot3D::SetupAxes("X", "Y", "Z");
+        ImPlot3D::PlotLine("Dynamic Curve", xs, ys, zs, N);
+        ImPlot3D::EndPlot();
+    }
+}
+
 void DemoBoxRotation() {
     double origin[2] = {0.0, 0.0};
     double axis[2] = {0.0, 1.0};
@@ -829,6 +852,13 @@ void DemoPlotFlags() {
     ImGui::TextDisabled("(?)");
     if (ImGui::IsItemHovered()) {
         ImGui::SetTooltip("Disable all user inputs");
+    }
+
+    CHECKBOX_FLAG(flags, ImPlot3DFlags_AutoBoxScale);
+    ImGui::SameLine();
+    ImGui::TextDisabled("(?)");
+    if (ImGui::IsItemHovered()) {
+        ImGui::SetTooltip("Auto-scale the plot box to fit data");
     }
 
     if (ImPlot3D::BeginPlot("Plot Flags Demo", ImVec2(-1, 0), flags)) {
@@ -1011,6 +1041,7 @@ void ShowAllDemos() {
         }
         if (ImGui::BeginTabItem("Axes")) {
             DemoHeader("Box Scale", DemoBoxScale);
+            DemoHeader("Auto Box Scale", DemoAutoBoxScale);
             DemoHeader("Box Rotation", DemoBoxRotation);
             DemoHeader("Tick Labels", DemoTickLabels);
             DemoHeader("Axis Constraints", DemoAxisConstraints);

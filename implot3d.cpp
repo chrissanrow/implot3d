@@ -1462,6 +1462,14 @@ bool BeginPlot(const char* title_id, const ImVec2& size, ImPlot3DFlags flags) {
     plot.OpenContextThisFrame = false;
     plot.RotationCond = ImPlot3DCond_None;
 
+    // If AutoBoxScale flag is set, mark the plot/axes to fit this frame
+    if (ImHasFlag(flags, ImPlot3DFlags_AutoBoxScale)) {
+        plot.FitThisFrame = true;
+        for (int i = 0; i < 3; i++) {
+            plot.Axes[i].FitThisFrame = true;
+        }
+    }
+
     // Populate title
     plot.SetTitle(title_id);
 
